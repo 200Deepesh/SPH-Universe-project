@@ -21,7 +21,6 @@ class writeMongoFile extends Writable {
 
         let thisScope = this;
         const metaData = this.metaData;
-        console.log(metaData);
         this.model.create({
             fieldName: metaData.fieldname,
             encoding: metaData.encoding,
@@ -32,6 +31,7 @@ class writeMongoFile extends Writable {
             .then(function (doc) {
                 thisScope.docId = doc.id;
                 thisScope.dataSize = doc.size;
+                console.log(`file with id:${doc.id} and fieldname:${doc.fieldName} is uploaded successfully`);
                 callback();
             })
             .catch((err) => callback(err));
@@ -40,7 +40,6 @@ class writeMongoFile extends Writable {
 
 function MongoFileStorageEngine(opts) {
     this.getDestination = opts.mongoModel;
-    // this.limits = opts.limits;
 }
 
 MongoFileStorageEngine.prototype._handleFile = function _handleFile(req, file, cb) {
@@ -72,7 +71,10 @@ MongoFileStorageEngine.prototype._removeFile = function _removeFile(req, file, c
         if (err) return cb(err);
 
         model.findByIdAndDelete(file.id)
-            .then(() =>{ cb(); console.log("file is deleted") })
+            .then(() =>{ 
+                console.log(`file with id:${file.id} and fieldname:${file.fieldname} is deleted by multer.`);
+                cb(); 
+            })
             .catch((err) => {
                 console.error(err);
                 cb(err);

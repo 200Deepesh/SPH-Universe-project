@@ -30,7 +30,7 @@ export const uploadFiles = (fieldNames) => {
         }
     }
     catch (err) {
-        console.log(err);
+        console.error(err);
         return res.status(500).json({error: "Failed to save uploaded files. Please try agian later!!"});
     }
 }

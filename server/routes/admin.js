@@ -43,23 +43,22 @@ router.get("/signout", (req, res) => {
 router.post('/vacancy', async (req, res) => {
     try {
         const { post } = req.body;
-        console.log(post);
         const newVacany = new VacancyModel({ name: post });
         await newVacany.save();
         return res.status(200).json({ message: "Vacancy is added successfully!!" });
     }
     catch (err) {
-        console.log(err);
+        console.error(err);
         return res.status(500).json({ error: "Failed to save vacancy, please try it again later!!" });
     }
 });
 
 router.delete('/vacancy', async (req, res) => {
     try {
-        console.log(req.body);
         const { vacancyId } = req.body;
         if (vacancyId) {
             await VacancyModel.deleteOne({ _id: vacancyId });
+            console.log(`Vacancy with id:${vacancyId} is deleted successfully`);
             return res.status(200).json({ message: "Post is deleted successfully!!" });
         }
         else {
@@ -67,7 +66,7 @@ router.delete('/vacancy', async (req, res) => {
         }
     }
     catch (err) {
-        console.log(err);
+        console.error(err);
         return res.status(500).json({ error: "Failed to delete the post. Please try again later!!" });
     }
 });
@@ -89,6 +88,7 @@ router.delete("/profile", async (req, res) => {
         const { resumeId } = await ProfileModel.findById(id);
         await FileModel.findByIdAndDelete(resumeId);
         await ProfileModel.findByIdAndDelete(id);
+        console.log(`Profile with id:${id} is deleted successfully`);
         res.status(200).json({ message: "Delete user profile successfully!!" });
     }
     catch (err) {
@@ -114,6 +114,7 @@ router.delete("/applications", async (req, res) => {
         const { photoId, resumeId, marksheetId, signatureId } = await ApplicationsModel.findById(id);
         await FileModel.deleteMany({ _id: [photoId, resumeId, marksheetId, signatureId] });
         await ApplicationsModel.findByIdAndDelete(id);
+        console.log(`Application with id:${id} is deleted successfully`);
         res.status(200).json({ message: "Applications is deleted successfully!!" });
     }
     catch (err) {
@@ -130,19 +131,16 @@ router.get("/file/:id", async (req, res) => {
                 return doc.bufferData;
             }
         });
-        readStream.on("data", (doc) => {
-            console.log(doc.id);
-        });
         readStream.on("error", async (err) => {
-            console.log(err);
+            console.error(err);
             await readStream.close();
             return res.status(500).json({ error: "Failed to server requested file!!" });
         });
         readStream.pipe(res);
-}
+    }
     catch (err) {
-    console.log(err);
-    return res.status(500).json({ error: "Failed to server requested file!!" });
-}
+        console.error(err);
+        return res.status(500).json({ error: "Failed to server requested file!!" });
+    }
 });
 export default router;
