@@ -3,7 +3,6 @@ import multerUpload from "../services/multer.js";
 
 export const uploadFiles = (fieldNames) => {
     try {
-        console.log(fieldNames, typeof(fieldNames));
         let upload = multerUpload.none();
         if(Array.isArray(fieldNames)){
             const fields = fieldNames.map((fieldName)=>{

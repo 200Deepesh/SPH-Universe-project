@@ -1,5 +1,6 @@
 import multer from "multer";
-import mongoFileStorage from "./storageEngine.js";
+import mongoFileStorage from "./mongoStorageEngine.js";
+import megaFileStorage from "./megaStorageEngine.js";
 import File from "../models/file.js";
 
 const fileStorage = mongoFileStorage({
@@ -8,5 +9,15 @@ const fileStorage = mongoFileStorage({
     },
 });
 
-const upload = multer({ storage: fileStorage, limits: { fileSize: 1048576 } });
+const megaStorage = megaFileStorage({
+    filePath: (req, file, cb) => {
+        cb(null, "uploads");
+    },
+    filename: (req, file, cb) => {
+        const uniqueName = Date.now() + file.originalname;
+        cb(null, uniqueName);
+    }
+});
+
+const upload = multer({ storage: megaStorage, limits: { fileSize: 1048576 } });
 export default upload;
