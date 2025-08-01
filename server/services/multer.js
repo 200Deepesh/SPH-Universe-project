@@ -1,13 +1,5 @@
 import multer from "multer";
-import mongoFileStorage from "./mongoStorageEngine.js";
 import megaFileStorage from "./megaStorageEngine.js";
-import File from "../models/file.js";
-
-const fileStorage = mongoFileStorage({
-    mongoModel: (req, file, cb) => {
-        cb(null, File);
-    },
-});
 
 const megaStorage = megaFileStorage({
     filePath: (req, file, cb) => {
